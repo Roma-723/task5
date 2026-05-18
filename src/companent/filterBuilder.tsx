@@ -270,16 +270,6 @@ const FilterBuilder = () => {
                                           ? {
                                                 ...condition,
                                                 inValues:        
-
-
-
-
-
-
-
-
-
-                                                
                                                     [
                                                         ...condition.inValues,
                                                         "",
