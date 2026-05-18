@@ -269,7 +269,17 @@ const FilterBuilder = () => {
                                       i === conditionIndex
                                           ? {
                                                 ...condition,
-                                                inValues:
+                                                inValues:        
+
+
+
+
+
+
+
+
+
+                                                
                                                     [
                                                         ...condition.inValues,
                                                         "",
@@ -594,7 +604,7 @@ const FilterBuilder = () => {
                     </button>
 
                     {showShouldBox && (
-                        <div className="w-full border-2 border-dashed border-sky-400 rounded-3xl bg-[#f4f4f4] p-4 min-h-[120px] flex flex-col gap-5">
+                        <div className="w-full border-2 border-dashed border-sky-400 rounded-3xl bg-[#f4f4f4] p-4 min-h-30 flex flex-col gap-5">
                             {shouldFilters.map(
                                 (
                                     filter,
