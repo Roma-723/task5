@@ -258,21 +258,21 @@ export function Filtermaps() {
     );
   };
 
-  const updateChildren = (
-    filterId: number,
-    children: Filter[],
-  ) => {
-    setShouldFilters((prev) =>
-      prev.map((filter) =>
-        filter.id === filterId
-          ? {
-              ...filter,
-              children,
-            }
-          : filter,
-      ),
-    );
-  };
+  // const updateChildren = (
+  //   filterId: number,
+  //   children: Filter[],
+  // ) => {
+  //   setShouldFilters((prev) =>
+  //     prev.map((filter) =>
+  //       filter.id === filterId
+  //         ? {
+  //             ...filter,
+  //             children,
+  //           }
+  //         : filter,
+  //     ),
+  //   );
+  // };
 
   const saveFilters = () => {
     console.clear();
@@ -569,7 +569,12 @@ export function Filtermaps() {
           Добавить should
         </button>
 
-        
+        <button
+          onClick={saveFilters}
+          className="h-11 px-6 rounded-2xl bg-green-600 text-white"
+        >
+          Save JSON
+        </button>
       </div>
     </div>
   );
