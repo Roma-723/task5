@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 
 export function Filtermaps() {
-  const keys = [
-    { id: "key_1", name: "Ключ №1" },
-    { id: "key_2", name: "Ключ №2" },
-    { id: "key_3", name: "Ключ №3" },
-  ];
+  // const keys = [
+  //   { id: "key_1", name: "Ключ №1" },
+  //   { id: "key_2", name: "Ключ №2" },
+  //   { id: "key_3", name: "Ключ №3" },
+  // ];
 
-  const selects = [
-    { id: "Select_1", name: "select №1" },
-    { id: "Select_2", name: "select №2" },
-  ];
+  // const selects = [
+  //   { id: "Select_1", name: "select №1" },
+  //   { id: "Select_2", name: "select №2" },
+  // ];
 
   const filterTypess = [
     "range",
@@ -76,10 +76,10 @@ export function Filtermaps() {
       prev.map((filter) =>
         filter.id === id
           ? {
-            ...filter,
-            type: value,
-            conditions: [{ inValues: [""] }],
-          }
+              ...filter,
+              type: value,
+              conditions: [{ inValues: [""] }],
+            }
           : filter,
       ),
     );
@@ -92,12 +92,12 @@ export function Filtermaps() {
       prev.map((filter) =>
         filter.id === filterId
           ? {
-            ...filter,
-            conditions: [
-              ...filter.conditions,
-              { inValues: [""] },
-            ],
-          }
+              ...filter,
+              conditions: [
+                ...filter.conditions,
+                { inValues: [""] },
+              ],
+            }
           : filter,
       ),
     );
@@ -111,13 +111,13 @@ export function Filtermaps() {
       prev.map((filter) =>
         filter.id === filterId
           ? {
-            ...filter,
-            conditions:
-              filter.conditions.filter(
-                (_, i) =>
-                  i !== conditionIndex,
-              ),
-          }
+              ...filter,
+              conditions:
+                filter.conditions.filter(
+                  (_, i) =>
+                    i !== conditionIndex,
+                ),
+            }
           : filter,
       ),
     );
@@ -131,21 +131,21 @@ export function Filtermaps() {
       prev.map((filter) =>
         filter.id === filterId
           ? {
-            ...filter,
-            conditions:
-              filter.conditions.map(
-                (condition, i) =>
-                  i === conditionIndex
-                    ? {
-                      ...condition,
-                      inValues: [
-                        ...condition.inValues,
-                        "",
-                      ],
-                    }
-                    : condition,
-              ),
-          }
+              ...filter,
+              conditions:
+                filter.conditions.map(
+                  (condition, i) =>
+                    i === conditionIndex
+                      ? {
+                          ...condition,
+                          inValues: [
+                            ...condition.inValues,
+                            "",
+                          ],
+                        }
+                      : condition,
+                ),
+            }
           : filter,
       ),
     );
@@ -160,23 +160,23 @@ export function Filtermaps() {
       prev.map((filter) =>
         filter.id === filterId
           ? {
-            ...filter,
-            conditions:
-              filter.conditions.map(
-                (condition, i) =>
-                  i === conditionIndex
-                    ? {
-                      ...condition,
-                      inValues:
-                        condition.inValues.filter(
-                          (_, vi) =>
-                            vi !==
-                            valueIndex,
-                        ),
-                    }
-                    : condition,
-              ),
-          }
+              ...filter,
+              conditions:
+                filter.conditions.map(
+                  (condition, i) =>
+                    i === conditionIndex
+                      ? {
+                          ...condition,
+                          inValues:
+                            condition.inValues.filter(
+                              (_, vi) =>
+                                vi !==
+                                valueIndex,
+                            ),
+                        }
+                      : condition,
+                ),
+            }
           : filter,
       ),
     );
@@ -238,58 +238,58 @@ export function Filtermaps() {
               >
                 {filter.type ===
                   "where" && (
-                    <div className="flex flex-col gap-3">
-                      {condition.inValues.map(
-                        (
-                          _,
-                          valueIndex,
-                        ) => (
-                          <div
-                            key={valueIndex}
-                            className="flex items-center gap-3"
+                  <div className="flex flex-col gap-3">
+                    {condition.inValues.map(
+                      (
+                        _,
+                        valueIndex,
+                      ) => (
+                        <div
+                          key={valueIndex}
+                          className="flex items-center gap-3"
+                        >
+                          <input
+                            type="text"
+                            placeholder="Value"
+                            className={`${inputClass} w-72`}
+                          />
+
+                          <button
+                            onClick={() =>
+                              removeShouldInValue(
+                                filter.id,
+                                ci,
+                                valueIndex,
+                              )
+                            }
+                            className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
                           >
-                            <input
-                              type="text"
-                              placeholder="Value"
-                              className={`${inputClass} w-72`}
-                            />
+                            - in
+                          </button>
+                        </div>
+                      ),
+                    )}
 
-                            <button
-                              onClick={() =>
-                                removeShouldInValue(
-                                  filter.id,
-                                  ci,
-                                  valueIndex,
-                                )
-                              }
-                              className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
-                            >
-                              - in
-                            </button>
-                          </div>
-                        ),
-                      )}
-
-                      <button
-                        onClick={() =>
-                          addShouldInValue(
-                            filter.id,
-                            ci,
-                          )
-                        }
-                        className="h-11 px-5 rounded-2xl bg-black text-white"
-                      >
-                        + in
-                      </button>
-                    </div>
-                  )}
+                    <button
+                      onClick={() =>
+                        addShouldInValue(
+                          filter.id,
+                          ci,
+                        )
+                      }
+                      className="h-11 px-5 rounded-2xl bg-black text-white"
+                    >
+                      + in
+                    </button>
+                  </div>
+                )}
 
                 {filter.type ===
                   "should" && (
-                    <div className="pl-5 border-l-2 border-sky-400">
-                      <Filtermaps />
-                    </div>
-                  )}
+                  <div className="pl-5 border-l-2 border-sky-400">
+                    <Filtermaps />
+                  </div>
+                )}
 
                 <button
                   onClick={() =>
