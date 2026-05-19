@@ -47,19 +47,57 @@ const createCondition = (): Condition => ({
   values: [""],
 });
 
+const createFilter = (): Filter => ({
+  id: Date.now() + Math.random(),
+  type: "",
+  conditions: [createCondition()],
+});
+
 const FilterBuilder = () => {
   const [filters, setFilters] = useState<Filter[]>(() => {
-    const saved = localStorage.getItem("filters");
+    try {
+      const saved = localStorage.getItem("filters");
 
-    return saved
-      ? JSON.parse(saved)
-      : [
-          {
-            id: Date.now(),
-            type: "",
-            conditions: [createCondition()],
-          },
-        ];
+      if (!saved) {
+        return [createFilter()];
+      }
+
+      const parsed = JSON.parse(saved);
+
+      if (!Array.isArray(parsed)) {
+        return [createFilter()];
+      }
+
+      return parsed.map((filter: any) => ({
+        id: filter.id || Date.now(),
+        type: filter.type || "",
+        conditions: Array.isArray(
+          filter.conditions,
+        )
+          ? filter.conditions.map(
+              (condition: any) => ({
+                key:
+                  condition?.key || "",
+                gte:
+                  condition?.gte || "",
+                lte:
+                  condition?.lte || "",
+                from:
+                  condition?.from || "",
+                to:
+                  condition?.to || "",
+                values: Array.isArray(
+                  condition?.values,
+                )
+                  ? condition.values
+                  : [""],
+              }),
+            )
+          : [createCondition()],
+      }));
+    } catch {
+      return [createFilter()];
+    }
   });
 
   useEffect(() => {
@@ -72,11 +110,7 @@ const FilterBuilder = () => {
   const addFilter = () => {
     setFilters((prev) => [
       ...prev,
-      {
-        id: Date.now() + Math.random(),
-        type: "",
-        conditions: [createCondition()],
-      },
+      createFilter(),
     ]);
   };
 
@@ -197,7 +231,8 @@ const FilterBuilder = () => {
                       ? {
                           ...condition,
                           values: [
-                            ...condition.values,
+                            ...(condition.values ||
+                              []),
                             "",
                           ],
                         }
@@ -228,15 +263,17 @@ const FilterBuilder = () => {
                     i === conditionIndex
                       ? {
                           ...condition,
-                          values:
-                            condition.values.filter(
-                              (
-                                _,
-                                vi,
-                              ) =>
-                                vi !==
-                                valueIndex,
-                            ),
+                          values: (
+                            condition.values ||
+                            []
+                          ).filter(
+                            (
+                              _,
+                              vi,
+                            ) =>
+                              vi !==
+                              valueIndex,
+                          ),
                         }
                       : condition,
                 ),
@@ -266,17 +303,19 @@ const FilterBuilder = () => {
                     i === conditionIndex
                       ? {
                           ...condition,
-                          values:
-                            condition.values.map(
-                              (
-                                v,
-                                vi,
-                              ) =>
-                                vi ===
-                                valueIndex
-                                  ? value
-                                  : v,
-                            ),
+                          values: (
+                            condition.values ||
+                            []
+                          ).map(
+                            (
+                              v,
+                              vi,
+                            ) =>
+                              vi ===
+                              valueIndex
+                                ? value
+                                : v,
+                          ),
                         }
                       : condition,
                 ),
@@ -475,7 +514,9 @@ const FilterBuilder = () => {
                   {filter.type ===
                     "where" && (
                     <div className="flex flex-col gap-3">
-                      {condition.values.map(
+                      {(condition.values ||
+                        []
+                      ).map(
                         (
                           value,
                           valueIndex,
