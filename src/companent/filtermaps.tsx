@@ -122,23 +122,23 @@ function FilterItem({
       }));
   };
 
-  const addShouldChild = (
-    filterId: number,
-  ) => {
-    setRootFilters((prev) =>
-      updateRecursive(
-        prev,
-        filterId,
-        (item) => ({
-          ...item,
-          children: [
-            ...item.children,
-            createFilter(),
-          ],
-        }),
-      ),
-    );
-  };
+  // const addShouldChild = (
+  //   filterId: number,
+  // ) => {
+  //   setRootFilters((prev) =>
+  //     updateRecursive(
+  //       prev,
+  //       filterId,
+  //       (item) => ({
+  //         ...item,
+  //         children: [
+  //           ...item.children,
+  //           createFilter(),
+  //         ],
+  //       }),
+  //     ),
+  //   );
+  // };
 
   const changeType = (
     filterId: number,
@@ -174,23 +174,23 @@ function FilterItem({
     );
   };
 
-  const addCondition = (
-    filterId: number,
-  ) => {
-    setRootFilters((prev) =>
-      updateRecursive(
-        prev,
-        filterId,
-        (item) => ({
-          ...item,
-          conditions: [
-            ...item.conditions,
-            createCondition(),
-          ],
-        }),
-      ),
-    );
-  };
+  // const addCondition = (
+  //   filterId: number,
+  // ) => {
+  //   setRootFilters((prev) =>
+  //     updateRecursive(
+  //       prev,
+  //       filterId,
+  //       (item) => ({
+  //         ...item,
+  //         conditions: [
+  //           ...item.conditions,
+  //           createCondition(),
+  //         ],
+  //       }),
+  //     ),
+  //   );
+  // };
 
   const removeCondition = (
     filterId: number,
