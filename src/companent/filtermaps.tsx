@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 
 const keys = [
   { id: "key_1", name: "Ключ №1" },
@@ -121,6 +122,24 @@ function FilterItem({
       }));
   };
 
+  const addShouldChild = (
+    filterId: number,
+  ) => {
+    setRootFilters((prev) =>
+      updateRecursive(
+        prev,
+        filterId,
+        (item) => ({
+          ...item,
+          children: [
+            ...item.children,
+            createFilter(),
+          ],
+        }),
+      ),
+    );
+  };
+
   const changeType = (
     filterId: number,
     value: string,
@@ -129,11 +148,28 @@ function FilterItem({
       updateRecursive(
         prev,
         filterId,
-        (item) => ({
-          ...item,
-          type: value,
-          conditions: [createCondition()],
-        }),
+        (item) => {
+          if (value === "should") {
+            return {
+              ...item,
+              type: value,
+              conditions: [],
+              children:
+                item.children.length > 0
+                  ? item.children
+                  : [createFilter()],
+            };
+          }
+
+          return {
+            ...item,
+            type: value,
+            conditions: [
+              createCondition(),
+            ],
+            children: [],
+          };
+        },
       ),
     );
   };
@@ -314,24 +350,6 @@ function FilterItem({
     );
   };
 
-  const addShouldChild = (
-    filterId: number,
-  ) => {
-    setRootFilters((prev) =>
-      updateRecursive(
-        prev,
-        filterId,
-        (item) => ({
-          ...item,
-          children: [
-            ...item.children,
-            createFilter(),
-          ],
-        }),
-      ),
-    );
-  };
-
   return (
     <div className="flex flex-col gap-5 border border-gray-200 bg-[#fafafa] p-6 rounded-3xl">
       <div className="flex items-center gap-3">
@@ -374,328 +392,359 @@ function FilterItem({
         </button>
       </div>
 
-      {filter.conditions.map(
-        (condition, ci) => (
-          <div
-            key={ci}
-            className="flex flex-col gap-4"
-          >
-            {[
-              "range",
-              "where",
-              "!where",
-              "from_to",
-            ].includes(filter.type) && (
-                <select
-                  value={condition.key}
-                  onChange={(e) =>
-                    updateCondition(
-                      filter.id,
-                      ci,
-                      "key",
-                      e.target.value,
-                    )
-                  }
-                  className={`${inputClass} w-56`}
-                >
-                  <option value="">
-                    select key
-                  </option>
-
-                  {keys.map((key) => (
-                    <option
-                      key={key.id}
-                      value={key.id}
-                    >
-                      {key.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-            {filter.type ===
-              "range" && (
-                <div className="flex flex-wrap gap-3">
-                  <input
-                    type="text"
-                    placeholder="gte"
-                    value={condition.gte}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "gte",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-32`}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="lte"
-                    value={condition.lte}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "lte",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-32`}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="gt"
-                    value={condition.gt}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "gt",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-32`}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="lt"
-                    value={condition.lt}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "lt",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-32`}
-                  />
-                </div>
-              )}
-
-            {[
-              "exist_key",
-              "!exist_key",
-            ].includes(filter.type) && (
-                <div className="flex flex-col gap-3">
-                  {condition.values.map(
-                    (
-                      value,
-                      valueIndex,
-                    ) => (
-                      <div
-                        key={valueIndex}
-                        className="flex items-center gap-3"
-                      >
-                        <select
-                          value={value}
-                          onChange={(e) =>
-                            updateValue(
-                              filter.id,
-                              ci,
-                              valueIndex,
-                              e.target.value,
-                            )
-                          }
-                          className={`${inputClass} w-56`}
-                        >
-                          <option value="">
-                            select
-                          </option>
-
-                          {selects.map((s) => (
-                            <option
-                              key={s.id}
-                              value={s.id}
-                            >
-                              {s.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        <button
-                          onClick={() =>
-                            removeValue(
-                              filter.id,
-                              ci,
-                              valueIndex,
-                            )
-                          }
-                          className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
-                        >
-                          -
-                        </button>
-                      </div>
-                    ),
-                  )}
-
-                  <button
-                    onClick={() =>
-                      addValue(
-                        filter.id,
-                        ci,
-                      )
-                    }
-                    className="h-11 px-5 rounded-2xl bg-black text-white"
-                  >
-                    + select
-                  </button>
-                </div>
-              )}
-
-            {[
-              "where",
-              "!where",
-            ].includes(filter.type) && (
-                <div className="flex flex-col gap-3">
-                  {condition.values.map(
-                    (
-                      value,
-                      valueIndex,
-                    ) => (
-                      <div
-                        key={valueIndex}
-                        className="flex items-center gap-3">
-                        <input
-                          type="text"
-                          placeholder="value"
-                          value={value}
-                          onChange={(e) =>
-                            updateValue(
-                              filter.id,
-                              ci,
-                              valueIndex,
-                              e.target.value,
-                            )
-                          }
-                          className={`${inputClass} w-72`}
-                        />
-
-                        <button
-                          onClick={() =>
-                            removeValue(
-                              filter.id,
-                              ci,
-                              valueIndex,
-                            )
-                          }
-                          className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
-                        >
-                          -
-                        </button>
-                      </div>
-                    ),
-                  )}
-
-                  <button
-                    onClick={() =>
-                      addValue(
-                        filter.id,
-                        ci,
-                      )
-                    }
-                    className="h-11 px-5 rounded-2xl bg-black text-white"
-                  >
-                    + value
-                  </button>
-                </div>
-              )}
-
-            {filter.type ===
-              "from_to" && (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="from"
-                    value={condition.from}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "from",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-40`}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="to"
-                    value={condition.to}
-                    onChange={(e) =>
-                      updateCondition(
-                        filter.id,
-                        ci,
-                        "to",
-                        e.target.value,
-                      )
-                    }
-                    className={`${inputClass} w-40`}
-                  />
-                </div>
-              )}
-
-            {filter.type ===
-              "should" && (
-                <div className="pl-5 border-l-2 border-sky-400 flex flex-col gap-5">
-                  {filter.children.map(
-                    (child) => (
-                      <FilterItem
-                        key={child.id}
-                        filter={child}
-                        rootFilters={
-                          rootFilters
-                        }
-                        setRootFilters={
-                          setRootFilters
-                        }
-                      />
-                    ),
-                  )}
-
-                  <button
-                    onClick={() =>
-                      addShouldChild(
-                        filter.id,
-                      )
-                    }
-                    className="h-11 px-5 rounded-2xl bg-black text-white"
-                  >
-                    + should
-                  </button>
-                </div>
-              )}
-
-            <button
-              onClick={() =>
-                removeCondition(
-                  filter.id,
-                  ci,
-                )
-              }
-              className="h-11 w-11 rounded-2xl border border-red-200 text-red-500"
+      {filter.type !== "should" &&
+        filter.conditions.map(
+          (condition, ci) => (
+            <div
+              key={ci}
+              className="flex flex-col gap-4"
             >
-              −
-            </button>
-          </div>
-        ),
-      )}
+              {[
+                "range",
+                "where",
+                "!where",
+                "from_to",
+              ].includes(filter.type) && (
+                  <select
+                    value={condition.key}
+                    onChange={(e) =>
+                      updateCondition(
+                        filter.id,
+                        ci,
+                        "key",
+                        e.target.value,
+                      )
+                    }
+                    className={`${inputClass} w-56`}
+                  >
+                    <option value="">
+                      select key
+                    </option>
 
-      {filter.type && (
-        <button
-          onClick={() =>
-            addCondition(filter.id)
-          }
-          className="h-11 w-11 rounded-2xl bg-black text-white text-xl"
-        >
-          +
-        </button>
+                    {keys.map((key) => (
+                      <option
+                        key={key.id}
+                        value={key.id}
+                      >
+                        {key.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+              {filter.type ===
+                "range" && (
+                  <div className="flex flex-wrap gap-3">
+                    <input
+                      type="text"
+                      placeholder="gte"
+                      value={condition.gte}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "gte",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-32`}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="lte"
+                      value={condition.lte}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "lte",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-32`}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="gt"
+                      value={condition.gt}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "gt",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-32`}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="lt"
+                      value={condition.lt}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "lt",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-32`}
+                    />
+                  </div>
+                )}
+
+              {[
+                "exist_key",
+                "!exist_key",
+              ].includes(filter.type) && (
+                  <div className="flex flex-col gap-3">
+                    {condition.values.map(
+                      (
+                        value,
+                        valueIndex,
+                      ) => (
+                        <div
+                          key={valueIndex}
+                          className="flex items-center gap-3"
+                        >
+                          <select
+                            value={value}
+                            onChange={(e) =>
+                              updateValue(
+                                filter.id,
+                                ci,
+                                valueIndex,
+                                e.target.value,
+                              )
+                            }
+                            className={`${inputClass} w-56`}
+                          >
+                            <option value="">
+                              select
+                            </option>
+
+                            {selects.map((s) => (
+                              <option
+                                key={s.id}
+                                value={s.id}
+                              >
+                                {s.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          <button
+                            onClick={() =>
+                              removeValue(
+                                filter.id,
+                                ci,
+                                valueIndex,
+                              )
+                            }
+                            className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
+                          >
+                            -
+                          </button>
+                        </div>
+                      ),
+                    )}
+
+                    <button
+                      onClick={() =>
+                        addValue(
+                          filter.id,
+                          ci,
+                        )
+                      }
+                      className="h-11 px-5 rounded-2xl bg-black text-white"
+                    >
+                      + select
+                    </button>
+                  </div>
+                )}
+
+              {[
+                "where",
+                "!where",
+              ].includes(filter.type) && (
+                  <div className="flex flex-col gap-3">
+                    {condition.values.map(
+                      (
+                        value,
+                        valueIndex,
+                      ) => (
+                        <div
+                          key={valueIndex}
+                          className="flex items-center gap-3"
+                        >
+                          <input
+                            type="text"
+                            placeholder="value"
+                            value={value}
+                            onChange={(e) =>
+                              updateValue(
+                                filter.id,
+                                ci,
+                                valueIndex,
+                                e.target.value,
+                              )
+                            }
+                            className={`${inputClass} w-72`}
+                          />
+
+                          <button
+                            onClick={() =>
+                              removeValue(
+                                filter.id,
+                                ci,
+                                valueIndex,
+                              )
+                            }
+                            className="h-11 px-4 rounded-2xl border border-red-200 text-red-500"
+                          >
+                            -
+                          </button>
+                        </div>
+                      ),
+                    )}
+
+                    <button
+                      onClick={() =>
+                        addValue(
+                          filter.id,
+                          ci,
+                        )
+                      }
+                      className="h-11 px-5 rounded-2xl bg-black text-white"
+                    >
+                      + value
+                    </button>
+                  </div>
+                )}
+
+              {filter.type ===
+                "from_to" && (
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      placeholder="from"
+                      value={condition.from}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "from",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-40`}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="to"
+                      value={condition.to}
+                      onChange={(e) =>
+                        updateCondition(
+                          filter.id,
+                          ci,
+                          "to",
+                          e.target.value,
+                        )
+                      }
+                      className={`${inputClass} w-40`}
+                    />
+                  </div>
+                )}
+
+              <button
+                onClick={() =>
+                  removeCondition(
+                    filter.id,
+                    ci,
+                  )
+                }
+                className="h-11 w-11 rounded-2xl border border-red-200 text-red-500"
+              >
+                −
+              </button>
+            </div>
+          ),
+        )}
+
+      {filter.type === "should" && (
+        <div className="pl-5 border-l-2 border-sky-400 flex flex-col gap-5">
+          {filter.children.map(
+            (child) => (
+              <FilterItem
+                key={child.id}
+                filter={child}
+                rootFilters={rootFilters}
+                setRootFilters={setRootFilters}
+              />
+            ),
+          )}
+
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              if (!e.target.value)
+                return;
+
+              const value =
+                e.target.value;
+
+              const newFilter =
+                createFilter();
+
+              newFilter.type =
+                value;
+
+              newFilter.conditions =
+                value === "should"
+                  ? []
+                  : [createCondition()];
+
+              if (value === "should") {
+                newFilter.children = [];
+              }
+
+              setRootFilters((prev) =>
+                updateRecursive(
+                  prev,
+                  filter.id,
+                  (item) => ({
+                    ...item,
+                    children: [
+                      ...item.children,
+                      newFilter,
+                    ],
+                  }),
+                ),
+              );
+
+              e.target.value = "";
+            }}
+            className={`${inputClass} w-56`}
+          >
+            <option value="">
+              select type
+            </option>
+
+            {filterTypes.map((type) => (
+              <option
+                key={type}
+                value={type}
+              >
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
       )}
     </div>
   );
@@ -705,6 +754,16 @@ export default function Filtermaps({
   filters,
   setFilters,
 }: Props) {
+  useEffect(() => {
+    console.log(
+      JSON.stringify(
+        filters,
+        null,
+        2,
+      ),
+    );
+  }, [filters]);
+
   return (
     <div className="flex flex-col gap-5">
       {filters.map((filter) => (
