@@ -224,7 +224,6 @@ function FilterItem({
         ),
     );
   };
-
   const removeValue = (
     valueIndex: number,
   ) => {
@@ -318,7 +317,55 @@ function FilterItem({
             ),
           )}
         </Select>
+                 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
         {[
           "range",
           "where",
@@ -421,8 +468,7 @@ function FilterItem({
               }
             />
           </div>
-        )}
-
+        )} 
         {[
           "where",
           "!where",
@@ -430,6 +476,15 @@ function FilterItem({
           filter.type,
         ) && (
           <>
+
+
+
+
+
+
+<p>dnfd</p>
+
+
             {filter.conditions[0]?.values.map(
               (
                 value,
