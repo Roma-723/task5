@@ -479,11 +479,7 @@ function FilterItem({
 
 
 
-
-
-
-<p>dnfd</p>
-
+<h1>sde</h1>
 
             {filter.conditions[0]?.values.map(
               (
