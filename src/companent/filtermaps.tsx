@@ -477,7 +477,6 @@ function FilterItem({
         ) && (
             <>
 
-<p>dwevefqwqdefvre</p>
 
               {filter.conditions[0]?.values.map(
                 (
