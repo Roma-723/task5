@@ -829,7 +829,6 @@ export default function FilterBuilder() {
             >
               Сохранить
             </Button>
-            <p>sfvsd</p>
           </div>
         </div>
       </div>
