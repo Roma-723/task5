@@ -854,7 +854,6 @@ export default function FilterBuilder() {
             <p>sfvsd</p>
             <p>sfvsd</p>
             <p>sfvsd</p>
-            <p>sfvsd</p>
           </div>
         </div>
       </div>
