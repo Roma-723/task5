@@ -821,7 +821,6 @@ export default function FilterBuilder() {
                 Очистить
               </Button>
             </div>
-
             <Button
               size="large"
               className="h-12 px-16 rounded-[14px] bg-[#111827] text-white! border-0"
