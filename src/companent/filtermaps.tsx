@@ -477,7 +477,6 @@ function FilterItem({
         ) && (
             <>
   <p>name</p>
-  <p>name</p>
 
               {filter.conditions[0]?.values.map(
                 (
